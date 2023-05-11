@@ -89,26 +89,12 @@ namespace SEWebApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
-            message.Emoji = Utilities.ControllerLogic.emojiCount(message.Content);
             message.Time = DateTime.Now;
-            //Update spendable and giftable points if sending an emoji
-            if (message.Emoji > 0)
-            {
-                var sender = await _context.Users.FindAsync(message.SenderId);
-                var reciever = await _context.Users.FindAsync(message.RecipientId);
-                if (sender.GiftablePoints >= 10)
-                {
-                    sender.GiftablePoints -= 10;
-                    reciever.SpendablePoints += 10;
-                    reciever.TotalPoints += 10;
-                }
-            }
-            //Save Message
+
             var saveModel = new MessageDataModel
             {
                 Content = Encryption.encryptString(message.Content),
                 SenderId = message.SenderId,
-                Emoji = message.Emoji,
                 Id = message.Id,
                 Read = message.Read
             };
@@ -125,26 +111,13 @@ namespace SEWebApp.Controllers
             if (userToSendTo.Username.Length > 0)
             {
                 Message message = new Message { Content = messageContent, RecipientId = userToSendTo.Id, SenderId = senderID, Time = DateTime.Now };
-                message.Emoji = Utilities.ControllerLogic.emojiCount(message.Content);
-                //Update spendable and giftable points if sending an emoji
-                if (message.Emoji > 0)
-                {
-                    var sender = await _context.Users.FindAsync(message.SenderId);
-                    var reciever = await _context.Users.FindAsync(message.RecipientId);
-                    if (sender.GiftablePoints >= 10)
-                    {
-                        sender.GiftablePoints -= 10;
-                        reciever.SpendablePoints += 10;
-                        reciever.TotalPoints += 10;
-                    }
-                }
+              
                 //Save Message
                 var saveModel = new MessageDataModel
                 {
                     Content = Encryption.encryptString(message.Content),
                     SenderId = message.SenderId,
                     RecipientId = message.RecipientId,
-                    Emoji = message.Emoji,
                     Id = message.Id,
                     Read = message.Read,
                     Time = DateTime.Now,

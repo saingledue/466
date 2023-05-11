@@ -17,7 +17,7 @@ namespace SEWebApp.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -39,26 +39,6 @@ namespace SEWebApp.Migrations
                     b.ToTable("Avatars");
                 });
 
-            modelBuilder.Entity("SEWebApp.Models.Emoji", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<int>("PointsWorth")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Unicode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Emojis");
-                });
-
             modelBuilder.Entity("SEWebApp.Models.MessageDataModel", b =>
                 {
                     b.Property<long>("Id")
@@ -70,9 +50,6 @@ namespace SEWebApp.Migrations
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("Emoji")
-                        .HasColumnType("int");
 
                     b.Property<bool>("Read")
                         .HasColumnType("bit");
@@ -91,48 +68,6 @@ namespace SEWebApp.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("SEWebApp.Models.Purchase", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("PurchaseTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("StickerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Purchases");
-                });
-
-            modelBuilder.Entity("SEWebApp.Models.Reward", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("PointsWorth")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Rewards");
-                });
-
             modelBuilder.Entity("SEWebApp.Models.UserDataModel", b =>
                 {
                     b.Property<long>("Id")
@@ -148,13 +83,7 @@ namespace SEWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("GiftablePoints")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastLoginTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastMessageSent")
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Name")
@@ -166,12 +95,6 @@ namespace SEWebApp.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("PrivacySetting")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpendablePoints")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalPoints")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")

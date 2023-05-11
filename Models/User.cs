@@ -16,14 +16,8 @@ namespace SEWebApp.Models
 
         public int PrivacySetting { get; set; }
 
-        public int SpendablePoints { get; set; }
-
-        public int GiftablePoints { get; set; }
-
-        public int TotalPoints { get; set; }
-
         public DateTime LastLoginTime { get; set; }
-        public DateTime LastMessageSent { get; set; }
+        public bool WhiteList { get; set; }
 
     }
 }

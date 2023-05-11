@@ -22,13 +22,9 @@ namespace SEWebApp.Utilities
                 Name = Encryption.decrpytString(encryptedUser.Name),
                 Username = encryptedUser.Username,
                 AvatarId = encryptedUser.AvatarId,
-                GiftablePoints = encryptedUser.GiftablePoints,
                 LastLoginTime = encryptedUser.LastLoginTime,
                 PrivacySetting = encryptedUser.PrivacySetting,
-                SpendablePoints = encryptedUser.SpendablePoints,
-                TotalPoints = encryptedUser.TotalPoints,
                 Id = encryptedUser.Id,
-                LastMessageSent = encryptedUser.LastMessageSent,
             };
 
             return user;
@@ -47,13 +43,9 @@ namespace SEWebApp.Utilities
                 Name = Encryption.encryptString(unencryptedUser.Name),
                 Username = unencryptedUser.Username,
                 AvatarId = unencryptedUser.AvatarId,
-                GiftablePoints = unencryptedUser.GiftablePoints,
                 LastLoginTime = unencryptedUser.LastLoginTime,
                 PrivacySetting = unencryptedUser.PrivacySetting,
-                SpendablePoints = unencryptedUser.SpendablePoints,
-                TotalPoints = unencryptedUser.TotalPoints,
                 Id = unencryptedUser.Id,
-                LastMessageSent=unencryptedUser.LastMessageSent,
             };
 
             return user;
@@ -70,7 +62,6 @@ namespace SEWebApp.Utilities
                 Content = Encryption.decrpytString(encryptedMessage.Content),
                 SenderId = encryptedMessage.SenderId,
                 RecipientId = encryptedMessage.RecipientId,
-                Emoji = encryptedMessage.Emoji,
                 Id = encryptedMessage.Id,
                 Read = encryptedMessage.Read,
                 Time = encryptedMessage.Time,
@@ -93,7 +84,6 @@ namespace SEWebApp.Utilities
                     Content = Encryption.decrpytString(message.Content),
                     SenderId = message.SenderId,
                     RecipientId = message.RecipientId,
-                    Emoji = message.Emoji,
                     Id = message.Id,
                     Read = message.Read,
                     Time = message.Time

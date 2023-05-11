@@ -52,10 +52,6 @@ namespace SEWebApp.Controllers
             var userFromUserName = await _context.Users.Where(a => a.Username == username).FirstOrDefaultAsync();
             var id = userFromUserName.Id;
             var testModel = await _context.Users.FindAsync(id);
-            if (DateTime.Now.Subtract(testModel.LastLoginTime).TotalDays >= 1) {
-                testModel.LastLoginTime = DateTime.Now;
-                testModel.GiftablePoints = 50;
-            }
             await _context.SaveChangesAsync();
             var user = ControllerLogic.decryptUser(testModel);
 
@@ -81,62 +77,6 @@ namespace SEWebApp.Controllers
             return user.PrivacySetting;
         }
 
-        [HttpGet("/getLeaderboard/{userid}")]
-        public async Task<IEnumerable<LeaderboardPosition>> UserLeaderboard(long userid)
-        {
-            // grab the users that should be displayed and order by how many total points they have
-            var encryptedOrderedUsers = await _context.Users.OrderByDescending(s => s.TotalPoints).Where(a => a.PrivacySetting == 1 || a.PrivacySetting == 3 || a.Id == userid).ToListAsync();
-
-            // decrypt all the users
-            var users = new ArrayList();
-            foreach (UserDataModel u in encryptedOrderedUsers)
-            {
-                users.Add(Utilities.ControllerLogic.decryptUser(u));
-            }
-
-            Boolean leaderboardHasUser = false;
-            // create leaderboard objects based on position and points, keep track of if
-            // the logged in user has showed up on leaderboard
-            var sortedLeaderboard = new ArrayList();
-            foreach (var user in users.OfType<User>())
-            {
-                if (sortedLeaderboard.Count < 5)
-                {
-                    LeaderboardPosition lp = new LeaderboardPosition { username = user.Username, totalPoints = user.TotalPoints, position = sortedLeaderboard.Count + 1, avatarId = user.AvatarId };
-                    sortedLeaderboard.Add(lp);
-                    if (user.Id == userid)
-                    {
-                        leaderboardHasUser = true;
-                    }
-                }
-            }
-
-            // if the logged in user isn't in the top 5, show them their position
-            if (!leaderboardHasUser)
-            {
-                UserDataModel thisUserDataModel = await _context.Users.FindAsync(userid);
-                if (thisUserDataModel != null)
-                {
-                    User thisUser = Utilities.ControllerLogic.decryptUser(thisUserDataModel);
-
-                    int userIndex = -1;
-                    int index = 1;
-                    foreach (User u in users)
-                    {
-                        if (u.Id == userid)
-                        {
-                            userIndex = index;
-                        }
-                        index = index + 1;
-                    }
-
-                    LeaderboardPosition lp = new LeaderboardPosition { username = thisUser.Username, totalPoints = thisUser.TotalPoints, position = userIndex, avatarId = thisUser.AvatarId };
-                    sortedLeaderboard.Add(lp);
-                }
-            }
-            return sortedLeaderboard.Cast<LeaderboardPosition>().AsEnumerable<LeaderboardPosition>();
-        }
-
         [HttpGet("/privacyUpdate/{userId}/{privacySetting}")]
         public async Task<ActionResult> UpdateUserPrivacy(long userId, int privacySetting)
         {
@@ -160,7 +100,7 @@ namespace SEWebApp.Controllers
         [HttpGet("/register/{username}/{password}/{email}/{name}")]
         public async Task<ActionResult<User>> RegisterUser(String username, String password, String email, String name)
         {
-            User user = new User { Name = username, Password = password, Email = email, Username = username, AvatarId = 0, PrivacySetting = 0, SpendablePoints = 0, GiftablePoints = 50, TotalPoints = 0, LastLoginTime = DateTime.Now, LastMessageSent=DateTime.Now };
+            User user = new User { Name = username, Password = password, Email = email, Username = username, AvatarId = 0, PrivacySetting = 0, LastLoginTime = DateTime.Now, WhiteList=false };
 
             var upload = ControllerLogic.encryptUser(user);
             _context.Users.Add(upload);
@@ -220,7 +160,7 @@ namespace SEWebApp.Controllers
                 var users = await _context.Users.ToListAsync();
                 foreach (UserDataModel udm in users)
                 {
-                    if (udm.LastMessageSent.ToShortDateString().Equals((DateTime.Now - TimeSpan.FromDays(14)).ToShortDateString()))
+                    if (udm.LastLoginTime.ToShortDateString().Equals((DateTime.Now - TimeSpan.FromDays(14)).ToShortDateString()))
                     {
                         User u = ControllerLogic.decryptUser(udm);
                         String subject = "We've missed you!";
