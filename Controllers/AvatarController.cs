@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SEWebApp.Models;
-namespace SEWebApp.Controllers
+using ABABI.Models;
+namespace ABABI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AvatarController : ControllerBase
     {
-        private readonly fundDBContext _context;
+        private readonly ABABIDBContext _context;
 
-        public AvatarController(fundDBContext context)
+        public AvatarController(ABABIDBContext context)
         {
             _context = context;
         }

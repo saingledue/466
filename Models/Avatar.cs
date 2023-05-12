@@ -1,4 +1,4 @@
-namespace SEWebApp.Models
+namespace ABABI.Models
 {
     public class Avatar
     {

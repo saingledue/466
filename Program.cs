@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using SEWebApp.Models;
+using ABABI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<fundDBContext>(options =>
-     options.UseSqlServer(builder.Configuration.GetConnectionString("FundDatabase")));
+builder.Services.AddDbContext<ABABIDBContext>(options =>
+     options.UseSqlServer(builder.Configuration.GetConnectionString("466Database")));
 var MyAllowSpecificOrigins = "OriginsAllowed";
 builder.Services.AddCors(options =>
 {

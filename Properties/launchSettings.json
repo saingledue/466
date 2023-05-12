@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "SEWebAppFinal": {
+    "466Backend": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

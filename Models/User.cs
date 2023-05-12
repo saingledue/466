@@ -1,4 +1,4 @@
-namespace SEWebApp.Models
+namespace ABABI.Models
 {
     public class User
     {
@@ -13,8 +13,6 @@ namespace SEWebApp.Models
         public string Email { get; set; }
 
         public int AvatarId { get; set; }
-
-        public int PrivacySetting { get; set; }
 
         public DateTime LastLoginTime { get; set; }
         public bool WhiteList { get; set; }

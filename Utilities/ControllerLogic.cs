@@ -1,10 +1,10 @@
-﻿using SEWebApp.Models;
-using SEWebApp.Utilities;
+﻿using ABABI.Models;
+using ABABI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MailKit.Net.Smtp;
 using System.Text.RegularExpressions;
-namespace SEWebApp.Utilities
+namespace ABABI.Utilities
 {
     public class ControllerLogic
     {
@@ -19,11 +19,11 @@ namespace SEWebApp.Utilities
             {
                 Email = Encryption.decrpytString(encryptedUser.Email),
                 Password = Encryption.decrpytString(encryptedUser.Password),
-                Name = Encryption.decrpytString(encryptedUser.Name),
+                Name = encryptedUser.Name,
                 Username = encryptedUser.Username,
                 AvatarId = encryptedUser.AvatarId,
                 LastLoginTime = encryptedUser.LastLoginTime,
-                PrivacySetting = encryptedUser.PrivacySetting,
+                WhiteList = encryptedUser.WhiteList,
                 Id = encryptedUser.Id,
             };
 
@@ -40,11 +40,11 @@ namespace SEWebApp.Utilities
             {
                 Email = Encryption.encryptString(unencryptedUser.Email),
                 Password = Encryption.encryptString(unencryptedUser.Password),
-                Name = Encryption.encryptString(unencryptedUser.Name),
+                Name = unencryptedUser.Name,
                 Username = unencryptedUser.Username,
                 AvatarId = unencryptedUser.AvatarId,
                 LastLoginTime = unencryptedUser.LastLoginTime,
-                PrivacySetting = unencryptedUser.PrivacySetting,
+                WhiteList = unencryptedUser.WhiteList,
                 Id = unencryptedUser.Id,
             };
 
@@ -92,37 +92,6 @@ namespace SEWebApp.Utilities
             return returnModel;
         }
 
-        public static Boolean sendEmail(String username, String email, String subject, String text)
-        {
-            Boolean success = true;
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("block", "blockofficial2022@gmail.com"));
-            message.To.Add(new MailboxAddress(username, email));
-            message.Subject = subject;
-
-            message.Body = new TextPart("plain")
-            {
-                Text = text
-            };
-
-            using (var client = new SmtpClient())
-            {
-                try
-                {
-                    client.Connect("smtp.gmail.com", 587, false);
-
-                    // Note: only needed if the SMTP server requires authentication
-                    client.Authenticate("blockofficial2022@gmail.com", "blockpassword123*");
-
-                    client.Send(message);
-                    client.Disconnect(true);
-                }  catch (Exception ex)
-                {
-                    success = false;
-                }
-            }
-            return success;
-        }
         public static int emojiCount(string input)
         {
             //Finds all non text unicode values

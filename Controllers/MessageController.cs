@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SEWebApp.Models;
-using SEWebApp.Utilities;
+using ABABI.Models;
+using ABABI.Utilities;
 using System.Text.RegularExpressions;
 using System.Collections;
-namespace SEWebApp.Controllers
+namespace ABABI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly fundDBContext _context;
+        private readonly ABABIDBContext _context;
 
-        public MessageController(fundDBContext context)
+        public MessageController(ABABIDBContext context)
         {
             _context = context;
         }

@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-namespace SEWebApp.Utilities
+namespace ABABI.Utilities
 {
     public class Encryption
     {

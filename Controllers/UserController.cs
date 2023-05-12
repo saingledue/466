@@ -1,17 +1,17 @@
 ﻿#nullable disable
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SEWebApp.Models;
-using SEWebApp.Utilities;
+using ABABI.Models;
+using ABABI.Utilities;
 using System.Collections;
-namespace SEWebApp.Controllers
+namespace ABABI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly fundDBContext _context;
-        public UserController(fundDBContext context)
+        private readonly ABABIDBContext _context;
+        public UserController(ABABIDBContext context)
         {
             _context = context;
         }
@@ -65,27 +65,6 @@ namespace SEWebApp.Controllers
 
         }
 
-        [HttpGet("/getPrivacy/{id}")]
-        public async Task<int> UserPrivacy(long id)
-        {
-            if (!UserExists(id))
-            {
-                return -1;
-            }
-            var testModel = await _context.Users.FindAsync(id);
-            var user = ControllerLogic.decryptUser(testModel);
-            return user.PrivacySetting;
-        }
-
-        [HttpGet("/privacyUpdate/{userId}/{privacySetting}")]
-        public async Task<ActionResult> UpdateUserPrivacy(long userId, int privacySetting)
-        {
-            var model = await _context.Users.FindAsync(userId);
-            model.PrivacySetting = privacySetting;
-            await _context.SaveChangesAsync();
-            return Accepted();
-        }
-
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -100,15 +79,11 @@ namespace SEWebApp.Controllers
         [HttpGet("/register/{username}/{password}/{email}/{name}")]
         public async Task<ActionResult<User>> RegisterUser(String username, String password, String email, String name)
         {
-            User user = new User { Name = username, Password = password, Email = email, Username = username, AvatarId = 0, PrivacySetting = 0, LastLoginTime = DateTime.Now, WhiteList=false };
+            User user = new User { Name = username, Password = password, Email = email, Username = username, AvatarId = 0, WhiteList = false, LastLoginTime = DateTime.Now};
 
             var upload = ControllerLogic.encryptUser(user);
             _context.Users.Add(upload);
             await _context.SaveChangesAsync();
-
-            String subject = "Welcome to block";
-            String text = @"Hey " + username + ",\n\nWe are thrilled to welcome you to the block positivity messaging service! \n\n- The block team";
-            ControllerLogic.sendEmail(username, email, subject, text);
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
 
@@ -151,29 +126,40 @@ namespace SEWebApp.Controllers
         {
             return await _context.Users.AnyAsync(e => Equals(e.Username, username));
         }
-
-        [HttpGet("messageInactiveUsers")]
-        public async Task<bool> messageInactiveUsers()
+        [HttpGet("whitelistUser/{username}")]
+        public async Task<bool> whitelistUser(String username)
         {
-            try
+            var user = await _context.Users.Where(e => Equals(e.Username, username)).FirstOrDefaultAsync();
+            if (user != null && user.Username.Length >0)
             {
-                var users = await _context.Users.ToListAsync();
-                foreach (UserDataModel udm in users)
-                {
-                    if (udm.LastLoginTime.ToShortDateString().Equals((DateTime.Now - TimeSpan.FromDays(14)).ToShortDateString()))
-                    {
-                        User u = ControllerLogic.decryptUser(udm);
-                        String subject = "We've missed you!";
-                        String text = @"Hey " + u.Username + ",\n\nWe've missed you!  It's been 14 days since you last used our service. Log back in to see what messages of positivity have been shared with you!\n\n- The block team";
-                        ControllerLogic.sendEmail(u.Username, u.Email, subject, text);
-                    }
-                }
-                return true;
+                user.WhiteList = true;
+                await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+
+            return true;
+        }
+        [HttpGet("updateName/{userId}/{name}")]
+        public async Task<ActionResult> UpdateName(long userId, string name)
+        {
+            var model = await _context.Users.FindAsync(userId);
+            model.Name = name;
+            await _context.SaveChangesAsync();
+            return Accepted();
+        }
+        [HttpGet("randomUser")]
+        public async Task<ActionResult<User>> GetRabdomWhiteListedUser()
+        {
+            var whiteListedUsers = await _context.Users.Where(e => e.WhiteList).ToListAsync();
+            if (whiteListedUsers.Count > 0)
             {
-                return false;
+                Random random = new Random();
+                int random_idx = random.Next(0, whiteListedUsers.Count);
+                var user = ControllerLogic.decryptUser(whiteListedUsers[random_idx]);
+                user.Password = "";
+                user.Email = "";
+                return user;
             }
+            return NoContent();
 
         }
     }
